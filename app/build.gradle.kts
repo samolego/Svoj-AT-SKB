@@ -1,8 +1,15 @@
-import org.jetbrains.kotlin.ir.backend.js.compile
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile: File = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -21,6 +28,15 @@ android {
             useSupportLibrary = true
         }
     }
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"]?.toString()
+            keyPassword = keystoreProperties["keyPassword"]?.toString()
+            storeFile =
+                if (keystoreProperties["storeFile"] != null) file(keystoreProperties["storeFile"]!!) else null
+            storePassword = keystoreProperties["storePassword"]?.toString()
+        }
+    }
 
     buildTypes {
         debug {
@@ -28,12 +44,14 @@ android {
         }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -72,5 +90,5 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     compileOnly("de.robv.android.xposed:api:82")
-    compileOnly("de.robv.android.xposed:api:82:sources")
+    implementation("de.robv.android.xposed:api:82:sources")
 }

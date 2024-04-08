@@ -2,3 +2,4 @@ decomp
 .idea/
 .gradle/
 local.properties
+key.properties

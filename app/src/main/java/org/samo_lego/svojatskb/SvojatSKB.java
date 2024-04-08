@@ -1,7 +1,5 @@
 package org.samo_lego.svojatskb;
 
-import androidx.annotation.NonNull;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
